@@ -19,7 +19,7 @@ This image will have you running & collecting stats in just a few minutes.
 docker run -d\
  --name graphite\
  --restart=always\
- -p 80:80\
+ -p 82:82\
  -p 2003-2004:2003-2004\
  -p 2023-2024:2023-2024\
  -p 8125:8125/udp\

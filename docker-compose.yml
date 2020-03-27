@@ -1,14 +1,40 @@
 version: "2"
 
 services:
+  grafana:
+    image: grafana/grafana:latest
+    ports:
+      - "3001:3001"
+    volumes:
+      - ./conf/etc/grafana/grafana.ini:/etc/grafana/grafana.ini
+      - ./srv/grafana/data:/var/lib/grafana
+    restart: always  
+    networks:
+      - metrics
+      image: prom/prometheus
+    ports:
+    - "9090:9090"
+    volumes:
+    - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    restart: always  
+    networks:
+      - metrics
   statsd:
-   build:
-    context: .
-   volumes:
-    - ./conf/opt/graphite/conf:/opt/graphite/conf
-   ports:
-    - "80:80"
-    - "2003-2004:2003-2004"
-    - "2023-2024:2023-2024"
-    - "8125:8125/udp"
-    - "8126:8126"
+    build:
+      context: .
+    volumes:
+      - ./conf/opt/graphite/conf:/opt/graphite/conf
+      - ./conf/opt/statsd_config:/opt/statsd/config
+      - ./srv/graphite/data:/opt/graphite/storage
+    ports:
+      - "82:82"
+      - "2003-2004:2003-2004"
+      - "2023-2024:2023-2024"
+      - "8125:8125/udp"
+      - "8126:8126"
+    restart: always  
+    networks:
+      - metrics
+networks:
+  metrics:
+    external: true
